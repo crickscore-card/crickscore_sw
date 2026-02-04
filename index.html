@@ -1,280 +1,278 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cricket Score Calculator</title>
-     <link rel="icon" type="image/png" href="./images/throw.png">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            background: #ffffff;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cricket Score Calculator</title>
+<link rel="icon" type="image/png" href="./images/throw.png">
 
-        h1, h2 {
-            margin: 10px;
-        }
+<style>
+body { font-family: Arial, sans-serif; text-align: center; background: #ffffff; }
+h1, h2 { margin: 10px; }
 
-        .target {
-            position: absolute;
-            top: 9px;
-            left: 10px;
-            font-weight: bold;
-            font-size: 24px;
-            color: #e41d59;
-        }
+.target {
+    position: absolute;
+    top: 9px;
+    left: 10px;
+    font-weight: bold;
+    font-size: 24px;
+    color: #e41d59;
+}
 
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(3, 100px);
-            justify-content: center;
-            gap: 17px;
-            margin-top: 11px;
-        }
+.grid {
+    display: grid;
+    grid-template-columns: repeat(3, 100px);
+    justify-content: center;
+    gap: 17px;
+    margin-top: 11px;
+}
 
-        button {
-            padding: 12px;
-            border: none;
-            border-radius: 6px;
-            font-size: 16px;
-            cursor: pointer;
-            color: white;
-        }
+button {
+    padding: 12px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+    color: white;
+}
 
-        .green {
-            background-color: #4CAF50;
-        }
+.green { background-color: #4CAF50; }
+.red { background-color: #e41d59; }
+.blue { background-color: #006aaa; }
 
-        .red {
-            background-color: #e41d59;
-        }
+.modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
 
-        .blue {
-            background-color: #006aaa;
-        }
+.modal button { margin: 5px; }
 
-        .modal {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: white;
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-        }
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.4);
+}
 
-            .modal button {
-                margin: 5px;
-            }
+/* :herb: WIN MODAL ONLY */
+#winModal {
+    border: 3px solid #4CAF50;
+    box-shadow: 0 0 20px rgba(76,175,80,0.5);
+    animation: winPop 0.35s ease-out;
+}
 
-        .overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.4);
-        }
-    </style>
+#winTitle {
+    color: #2e7d32;
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+#winSub {
+    color: #4CAF50;
+    font-size: 17px;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
+
+@keyframes winPop {
+    from { transform: translate(-50%, -55%) scale(0.8); opacity: 0; }
+    to { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+}
+</style>
 </head>
+
 <body>
 
-    <div class="target" id="targetDisplay"></div><br>
-    <h1>Total Score: <span id="score">0</span></h1>
-    <h2>Over: <span id="over">0.0</span></h2><br>
+<div class="target" id="targetDisplay"></div><br>
+<h1>Total Score: <span id="score">0</span></h1>
+<h2>Over: <span id="over">0.0</span></h2><br>
 
-    <div id="ballLog" style="margin: 0px auto; max-width: 330px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-start; align-items: center; line-height: 0;"></div>
+<div id="ballLog" style="margin: 0px auto; max-width: 330px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-start; align-items: center; line-height: 0;"></div>
 
-    <div class="grid">
-        <button class="green" onclick="addRuns(0)">0</button>
-        <button class="green" onclick="addRuns(1)">1</button>
-        <button class="green" onclick="addRuns(2)">2</button>
-        <button class="green" onclick="addRuns(3)">3</button>
-        <button class="green" onclick="addRuns(4)">4</button>
-        <button class="green" onclick="addRuns(5)">5</button>
-        <button class="green" onclick="addRuns(6)">6</button>
-        <button class="red" onclick="addWicket()">Wicket</button>
-        <button class="green" onclick="addWide()">Wide</button>
-        <button class="green" onclick="showNoBallModal()">No Ball</button>
-    </div>
+<div class="grid">
+    <button class="green" onclick="addRuns(0)">0</button>
+    <button class="green" onclick="addRuns(1)">1</button>
+    <button class="green" onclick="addRuns(2)">2</button>
+    <button class="green" onclick="addRuns(3)">3</button>
+    <button class="green" onclick="addRuns(4)">4</button>
+    <button class="green" onclick="addRuns(5)">5</button>
+    <button class="green" onclick="addRuns(6)">6</button>
+    <button class="red" onclick="addWicket()">Wicket</button>
+    <button class="green" onclick="addWide()">Wide</button>
+    <button class="green" onclick="showNoBallModal()">No Ball</button>
+</div>
 
-    <br>
-    <button class="blue" style="margin-right: 10px;" onclick="undo()">Undo</button>
-    <button class="red" style="margin-right: 10px;" onclick="newMatch()">New Match</button>
-    <button class="blue" onclick="nextInnings()">Next Innings</button>
+<br>
+<button class="blue" style="margin-right: 15px;" onclick="undo()">Undo</button>
+<button class="red" style="margin-right: 15px;" onclick="newMatch()">New Match</button>
+<button class="blue" onclick="nextInnings()">Next Innings</button>
 
-    <!-- Overlay -->
-    <div class="overlay" id="overlay"></div>
+<div class="overlay" id="overlay"></div>
 
-    <!-- Modal for No Ball -->
-    <div class="modal" id="noBallModal">
-        <h3>Select No Ball Runs</h3>
-        <div id="noBallButtons"></div>
-        <button class="red" onclick="closeModal()">Cancel</button>
-    </div>
+<div class="modal" id="noBallModal">
+    <h3>Select No Ball Runs</h3>
+    <div id="noBallButtons"></div>
+    <button class="red" onclick="closeModal()">Cancel</button>
+</div>
 
-    <script>
-        let score = 0, wickets = 0;
-        let overs = 0, ballsInOver = 0;
-        let history = [];
-        let target = null;
-        let inning = 1;
+<!-- :herb: CONGRATULATIONS MODAL -->
+<div class="modal" id="winModal">
+    <div id="winTitle">:tada: CONGRATULATIONS! :tada:</div>
+    <div id="winTitle">You successfully chased the target! :cricket_bat_and_ball:</div>
+    <button class="blue" onclick="closeWinModal()">Close</button>
+</div>
 
-        function updateDisplay() {
-            document.getElementById("score").innerText = score;
-            document.getElementById("over").innerText = overs + "." + ballsInOver;
-            document.getElementById("targetDisplay").innerText =
-                inning === 2 && target !== null ? "Target: " + target : "";
+<script>
+let score = 0, wickets = 0;
+let overs = 0, ballsInOver = 0;
+let history = [];
+let target = null;
+let inning = 1;
+let matchOver = false;
+
+function updateDisplay() {
+    document.getElementById("score").innerText = score;
+    document.getElementById("over").innerText = overs + "." + ballsInOver;
+    document.getElementById("targetDisplay").innerText =
+        inning === 2 && target !== null ? "Target: " + target : "";
+
+    if (inning === 2 && target !== null && score >= target && !matchOver) {
+        matchOver = true;
+        showWinModal();
+    }
+}
+
+function showWinModal() {
+    document.getElementById("overlay").style.display = "block";
+    document.getElementById("winModal").style.display = "block";
+}
+
+function closeWinModal() {
+    document.getElementById("overlay").style.display = "none";
+    document.getElementById("winModal").style.display = "none";
+}
+
+function recalculateFromHistory() {
+    score = 0;
+    wickets = 0;
+    let legalCount = 0;
+
+    history.forEach(item => {
+        if (item.type === "run") { score += item.runs; legalCount++; }
+        else if (item.type === "wicket") { wickets++; legalCount++; }
+        else if (item.type === "wide") { score += 1; }
+        else if (item.type === "noBall") { score += item.runs; }
+    });
+
+    overs = Math.floor(legalCount / 6);
+    ballsInOver = legalCount % 6;
+}
+
+function addRuns(runs) { history.push({ type: "run", runs }); renderLog(); }
+function addWicket() { history.push({ type: "wicket" }); renderLog(); }
+function addWide() { history.push({ type: "wide" }); renderLog(); }
+
+function showNoBallModal() {
+    const modal = document.getElementById("noBallModal");
+    const overlay = document.getElementById("overlay");
+    const buttons = document.getElementById("noBallButtons");
+    buttons.innerHTML = "";
+    for (let i = 0; i <= 6; i++) {
+        const btn = document.createElement("button");
+        btn.innerText = i + " Run(s)";
+        btn.className = "green";
+        btn.onclick = () => addNoBall(i);
+        buttons.appendChild(btn);
+    }
+    overlay.style.display = "block";
+    modal.style.display = "block";
+}
+
+function closeModal() {
+    document.getElementById("overlay").style.display = "none";
+    document.getElementById("noBallModal").style.display = "none";
+}
+
+function addNoBall(extraRuns) {
+    history.push({ type: "noBall", runs: 1 + extraRuns });
+    closeModal();
+    renderLog();
+}
+
+function undo() { history.pop(); renderLog(); }
+
+function newMatch() {
+    score = wickets = overs = ballsInOver = 0;
+    history = [];
+    target = null;
+    inning = 1;
+    matchOver = false;
+    renderLog();
+}
+
+function nextInnings() {
+    target = score + 1;
+    score = wickets = overs = ballsInOver = 0;
+    history = [];
+    inning = 2;
+    matchOver = false;
+    renderLog();
+}
+
+function renderLog() {
+    const log = document.getElementById("ballLog");
+    log.innerHTML = "";
+    let legalCount = 0;
+    let shouldInsertPipe = false;
+
+    recalculateFromHistory();
+
+    history.forEach((item) => {
+        if (shouldInsertPipe) {
+            const pipe = document.createElement("span");
+            pipe.innerText = "|";
+            pipe.style.padding = "0 6px";
+            pipe.style.fontWeight = "bold";
+            pipe.style.color = "#555";
+            log.appendChild(pipe);
+            shouldInsertPipe = false;
         }
 
-        function recalculateFromHistory() {
-            score = 0;
-            wickets = 0;
-            let legalCount = 0;
+        const span = document.createElement("span");
 
-            history.forEach(item => {
-                if (item.type === "run") {
-                    score += item.runs;
-                    legalCount++;
-                } else if (item.type === "wicket") {
-                    wickets++;
-                    legalCount++;
-                } else if (item.type === "wide") {
-                    score += 1;
-                } else if (item.type === "noBall") {
-                    score += item.runs;
-                }
-            });
+        if (item.type === "run") { span.innerText = item.runs; legalCount++; }
+        else if (item.type === "wicket") { span.innerText = "W"; legalCount++; }
+        else if (item.type === "wide") { span.innerText = "1(WB)"; }
+        else if (item.type === "noBall") { span.innerText = `${item.runs - 1}(NB-1)`; }
 
-            overs = Math.floor(legalCount / 6);
-            ballsInOver = legalCount % 6;
+        span.style.padding = "10px 11px";
+        span.style.background = "#ddd";
+        span.style.borderRadius = "6px";
+        span.style.fontSize = "14px";
+        span.style.margin = "0";
+        log.appendChild(span);
+
+        if (legalCount > 0 && legalCount % 6 === 0 && item.type !== "wide" && item.type !== "noBall") {
+            shouldInsertPipe = true;
         }
+    });
 
-        function addRuns(runs) {
-            history.push({ type: "run", runs });
-            renderLog();
-        }
+    updateDisplay();
+}
 
-        function addWicket() {
-            history.push({ type: "wicket" });
-            renderLog();
-        }
-
-        function addWide() {
-            history.push({ type: "wide" });
-            renderLog();
-        }
-
-        function showNoBallModal() {
-            const modal = document.getElementById("noBallModal");
-            const overlay = document.getElementById("overlay");
-            const buttons = document.getElementById("noBallButtons");
-            buttons.innerHTML = "";
-            for (let i = 0; i <= 6; i++) {
-                const btn = document.createElement("button");
-                btn.innerText = i + " Run(s)";
-                btn.className = "green";
-                btn.onclick = () => addNoBall(i);
-                buttons.appendChild(btn);
-            }
-            overlay.style.display = "block";
-            modal.style.display = "block";
-        }
-
-        function closeModal() {
-            document.getElementById("overlay").style.display = "none";
-            document.getElementById("noBallModal").style.display = "none";
-        }
-
-        function addNoBall(extraRuns) {
-            history.push({ type: "noBall", runs: 1 + extraRuns });
-            closeModal();
-            renderLog();
-        }
-
-        function undo() {
-            history.pop();
-            renderLog();
-        }
-
-        function newMatch() {
-            score = 0;
-            wickets = 0;
-            overs = 0;
-            ballsInOver = 0;
-            history = [];
-            target = null;
-            inning = 1;
-            renderLog();
-        }
-
-        function nextInnings() {
-            target = score + 1;
-            score = 0;
-            wickets = 0;
-            overs = 0;
-            ballsInOver = 0;
-            history = [];
-            inning = 2;
-            renderLog();
-        }
-
-        function renderLog() {
-            const log = document.getElementById("ballLog");
-            log.innerHTML = "";
-            let legalCount = 0;
-            let shouldInsertPipe = false;
-
-            recalculateFromHistory();
-
-            history.forEach((item, index) => {
-                // Insert pipe only once after 6 legal deliveries
-                if (shouldInsertPipe) {
-                    const pipe = document.createElement("span");
-                    pipe.innerText = "|";
-                    pipe.className = "pipe-separator";
-                    pipe.style.padding = "0 6px";
-                    pipe.style.fontWeight = "bold";
-                    pipe.style.color = "#555";
-                    log.appendChild(pipe);
-                    shouldInsertPipe = false;
-                }
-
-                const span = document.createElement("span");
-
-                if (item.type === "run") {
-                    span.innerText = item.runs;
-                    legalCount++;
-                } else if (item.type === "wicket") {
-                    span.innerText = "W";
-                    legalCount++;
-                } else if (item.type === "wide") {
-                    span.innerText = "1(WB)";
-                } else if (item.type === "noBall") {
-                    span.innerText = `${item.runs - 1}(NB-1)`;
-                }
-
-                span.style.padding = "10px 11px";
-                span.style.background = "#ddd";
-                span.style.borderRadius = "6px";
-                span.style.fontSize = "14px";
-                span.style.margin = "0";
-                log.appendChild(span);
-
-                // After 6 legal deliveries, set flag to insert pipe before next delivery
-                if (legalCount > 0 && legalCount % 6 === 0 && item.type !== "wide" && item.type !== "noBall") {
-                    shouldInsertPipe = true;
-                }
-            });
-
-            updateDisplay();
-        }
-
-        updateDisplay();
-    </script>
+updateDisplay();
+</script>
 </body>
 </html>
